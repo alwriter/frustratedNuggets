@@ -5,27 +5,29 @@
 'use strict';
 
 var React = require('react-native');
+var FrustratedNugget = require('./Creature');
+
+
 var {
   AppRegistry,
   StyleSheet,
   Text,
   View,
+  Image,
 } = React;
+
+var test = new FrustratedNugget(1, "billy");
 
 var frustratedNuggets = React.createClass({
   render: function() {
     return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.android.js
-        </Text>
-        <Text style={styles.instructions}>
-          Shake or press menu button for dev menu
-        </Text>
-      </View>
+      <Image source={require('./images/meditating_sloth.jpg')} style={styles.background}>      
+          <View style={styles.container}>
+            <Text style={styles.welcome}>
+              Welcome to Frustrated Nuggets, {test.roar()}! 
+            </Text>
+          </View>
+      </Image>
     );
   }
 });
@@ -35,12 +37,17 @@ var styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+   // backgroundColor: '#F5FCFF',
   },
   welcome: {
     fontSize: 20,
     textAlign: 'center',
     margin: 10,
+  },
+  background : {
+    flex: 1,
+    width: null,
+    height: null,
   },
   instructions: {
     textAlign: 'center',
