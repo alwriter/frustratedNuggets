@@ -1,7 +1,8 @@
 'use strict';
 
 var React = require('react-native');
-var MainScreen = require('./Main.js');
+var MainScreen = require('./Main');
+var NuggetList = require('./NuggetList');
 
 var {
   AppRegistry,
@@ -27,6 +28,9 @@ var frustratedNuggets = React.createClass({
 
         if(routeId == "MainPage"){
             return (<MainScreen navigator={navigator}></MainScreen>)
+        }
+        if(routeId == "NuggetListPage"){
+            return (<NuggetList navigator={navigator}></NuggetList>)
         }
     }
 });

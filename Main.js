@@ -69,6 +69,9 @@ var Main = React.createClass({
         });
         
   },
+ _viewNuggetList: function(){
+    this.props.navigator.push({id : "NuggetListPage", name : "What is this?"});
+ },
   render: function() {
     return (
       <Image source={require('./images/meditating_sloth.jpg')} style={styles.background}>      
@@ -87,6 +90,9 @@ var Main = React.createClass({
             </TouchableHighlight>
             <TouchableHighlight onPress={this._newNugget}>
                 <Text>get a Nugget</Text>
+            </TouchableHighlight>
+            <TouchableHighlight onPress={this._viewNuggetList}>
+                <Text>Visit your old nugget friends</Text>
             </TouchableHighlight>
           </View>
       </Image>
