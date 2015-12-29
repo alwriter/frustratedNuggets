@@ -1,13 +1,8 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- */
 'use strict';
 
 var React = require('react-native');
 var FrustratedNugget = require('./Creature');
-var NuggetManager = require('./CreatureManager');
-var nm = new NuggetManager();
+var nm = require('./CreatureManager');
 
 var {
   AppRegistry,
@@ -16,60 +11,69 @@ var {
   View,
   Image,
   ToastAndroid,
+  TouchableHighlight,
 } = React;
 
 function toast(msg){
-    ToastAndroid.show(msg, ToastAndroid.LONG);
-}
-
-async function testDB(){
-    var test = {"test1": "testttttt"};
-    var test2 = {"oh yeah 2" : "second is best"};
-    console.log("beginning test db");
-    await nm.clear();
-    var test = await nm.getAllCreatures();
-    console.log(test);
-
-    await nm.addCreature(new FrustratedNugget(1, "tim", 5, true));
-    await nm.addCreature(new FrustratedNugget(2, "bill", 5, false));
-    await nm.addCreature(new FrustratedNugget(3, "adam", 5, true));
-
-    var current = await nm.getCurrentCreature();
-    console.log(current);
-
-    var test2 = await nm.getAllCreatures();
-    console.log(test2);
-    console.log("end db test");
+    ToastAndroid.show(msg, ToastAndroid.SHORT);
 }
 
 async function newCurrentNugget(){
-    await nm.addCreature(new FrustratedNugget(null, "amanda", 5, true));
+   console.log("about to get a new nugget!"); 
+
+   var names = ["Amanda", "Andrew", "Leanne", "Sloth", "Timbo", "Jesus", 
+                "Charlie", "Steve", "Magnus", "George", "Darci", "Brent"];
+
+  var randomName = names[Math.floor(Math.random() * names.length)];
+  var stressValue = Math.ceil(Math.random() * 10);
+
+   var newCurrent =  await nm.setNewCurrent(new FrustratedNugget(randomName, stressValue, false));
+   console.log("\t", newCurrent, stressValue);
+   return newCurrent;
 }
 
-async function getCurrentNugget(){
-    var current = await nm.getCurrentCreature();
+async function calm(){
+   console.log("calm function : )");
+   console.log("\t1.", nm.current);
+   var updated = await nm.calmCurrentCreature();
+   console.log("\t2.", updated);
+   if(!updated){
+       console.log("\t3. must be time for a new nugget?");
+       updated = await newCurrentNugget();
+       console.log("\t4.", updated);
+   }
+   console.log("\tabout to return");
+   this.setState({currentCreature : updated});
 
-    if(current === null){
-        await newCurrentNugget();
-        current = await nm.getCurrentCreature();
-    }
-
-    return current;
 }
-
 
 var frustratedNuggets = React.createClass({
   
 
   getInitialState: function() {
-    return {currentCreature: {id: 1, name: "billary"} };
+    return {currentCreature: {name: "no nuggets in sight!"} };
   },
   componentDidMount: function() {
-    //testDB();
-   getCurrentNugget().then(function(data){
-        this.setState({currentCreature : data});
-   }.bind(this));
-   
+        
+      nm.init().then(() => {
+        if(nm.hasCurrentNugget()){
+            this.setState({currentCreature : nm.current});
+        }
+      });
+
+  },
+  _onPressButton : function(){
+
+      calm.bind(this)();
+
+  },
+  _newNugget : function(){
+      
+    newCurrentNugget()
+        .then((data) => {
+            this.setState({currentCreature : data})
+        });
+        
   },
   render: function() {
     return (
@@ -84,6 +88,12 @@ var frustratedNuggets = React.createClass({
             <Text style={styles.welcome}>
                 stress level = {this.state.currentCreature.stressLevel} 
             </Text>
+            <TouchableHighlight onPress={this._onPressButton}>
+                <Text>I just meditated</Text>
+            </TouchableHighlight>
+            <TouchableHighlight onPress={this._newNugget}>
+                <Text>get a Nugget</Text>
+            </TouchableHighlight>
           </View>
       </Image>
     );

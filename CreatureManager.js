@@ -4,21 +4,18 @@ var FrustratedNugget = require('./Creature');
 var reactNativeStore = require('react-native-store');
 var React = require('react-native');
 
-var {
-  AsyncStorage
-} = React;
-
-
 class CreatureManager {
 
+    objToNug(obj){
+        var nug = 
+            new FrustratedNugget(obj.name, 
+                                 obj.stressLevel, 
+                                 obj.archived);
+        nug._id = obj.id;
+        return nug;
+    }
 
-    async getAllCreatures(){
-        var nuggetModel = await reactNativeStore.model("nuggets");
-        var results = await nuggetModel.find();
-        return results;
-   }
-
-    async getCurrentCreature(){
+    async loadCurrent(){
         
         var nuggetModel = await reactNativeStore.model("nuggets");
         var nuggets = await this.getAllCreatures();
@@ -32,21 +29,61 @@ class CreatureManager {
     }
 
     async addCreature(nugget) {
-        var nuggetModel = await reactNativeStore.model("nuggets");
-        await nuggetModel.add(nugget);
+       var added = await this.nuggetModel.add(nugget);
+       return added;
+    }
+
+    hasCurrentNugget(){ this.current ? true : false;}
+
+    async init(){
+        this.nuggetModel = await reactNativeStore.model("nuggets");
+        this.current = await this.loadCurrent();
+    }
+
+    async setNewCurrent(nug) {
+        var newCurrent = await this.addCreature(nug);
+        this.current = newCurrent;
+        return this.current;
+    }
+
+    async getAllCreatures(){
+        var results = await this.nuggetModel.find();
+        return results;
+   }
+
+    getCurrentCreature(){
+        return this.current;
     }
 
     async deleteCreature(id) {
-        var nuggetModel = await reactNativeStore.model("nuggets");
 
     }
 
-    async updateCreature(id) {
-        var nuggetModel = await reactNativeStore.model("nuggets");
+    async updateCreature(nug) {
+        var wtf = nug._id;
+        var updated = await this.nuggetModel.updateById(nug, wtf);
+        nug._id = wtf;
+        return nug;
     }
 
-    async clear() {
-        await AsyncStorage.clear();
+    async calmCurrentCreature(){
+        
+        this.current.stressLevel = this.current.stressLevel - 1;
+        if(this.current.stressLevel === 0){
+            //archive them!
+            this.current.archived = true;
+            await this.updateCreature(this.current);
+            return null;
+        }
+        await this.updateCreature(this.current);
+        return this.current;
+
     }
+
+    async test(){
+
+    }
+    
 }
-module.exports = CreatureManager; 
+
+module.exports = new CreatureManager(); 
