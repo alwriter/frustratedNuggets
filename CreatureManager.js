@@ -6,15 +6,6 @@ var React = require('react-native');
 
 class CreatureManager {
 
-    objToNug(obj){
-        var nug = 
-            new FrustratedNugget(obj.name, 
-                                 obj.stressLevel, 
-                                 obj.archived);
-        nug._id = obj.id;
-        return nug;
-    }
-
     async loadCurrent(){
         
         var nuggetModel = await reactNativeStore.model("nuggets");
@@ -33,7 +24,7 @@ class CreatureManager {
        return added;
     }
 
-    hasCurrentNugget(){ this.current ? true : false;}
+    hasCurrentNugget(){ return this.current ? true : false;}
 
     async init(){
         this.nuggetModel = await reactNativeStore.model("nuggets");
@@ -55,8 +46,8 @@ class CreatureManager {
         return this.current;
     }
 
-    async deleteCreature(id) {
-
+    async deleteCreature(nug) {
+        var results = await this.nuggetModel.deleteById(nug._id);
     }
 
     async updateCreature(nug) {

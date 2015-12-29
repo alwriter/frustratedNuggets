@@ -19,7 +19,6 @@ function toast(msg){
 }
 
 async function newCurrentNugget(){
-   console.log("about to get a new nugget!"); 
 
    var names = ["Amanda", "Andrew", "Leanne", "Sloth", "Timbo", "Jesus", 
                 "Charlie", "Steve", "Magnus", "George", "Darci", "Brent"];
@@ -28,17 +27,23 @@ async function newCurrentNugget(){
   var stressValue = Math.ceil(Math.random() * 10);
 
    var newCurrent =  await nm.setNewCurrent(new FrustratedNugget(randomName, stressValue, false));
-   console.log("\t", newCurrent, stressValue);
    return newCurrent;
 }
 
-async function calm(){
+async function _calm(){
    var updated = await nm.calmCurrentCreature();
    if(!updated){
        updated = await newCurrentNugget();
    }
    this.setState({currentCreature : updated});
 
+}
+
+async function _init(){
+    await nm.init();
+    if(nm.hasCurrentNugget()){
+        this.setState({currentCreature : nm.current});
+    }
 }
 
 var Main = React.createClass({
@@ -48,21 +53,14 @@ var Main = React.createClass({
     return {currentCreature: {name: "no nuggets in sight!"} };
   },
   componentDidMount: function() {
-        
-      nm.init().then(() => {
-        if(nm.hasCurrentNugget()){
-            this.setState({currentCreature : nm.current});
-        }
-      });
-
+      _init.bind(this)();
   },
   _onPressButton : function(){
-
-      calm.bind(this)();
-
+      _calm.bind(this)();
   },
   _newNugget : function(){
-      
+    
+    //TODO: we should delete the current nugget before getting a new one
     newCurrentNugget()
         .then((data) => {
             this.setState({currentCreature : data})
