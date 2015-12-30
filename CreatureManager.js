@@ -6,6 +6,11 @@ var React = require('react-native');
 
 class CreatureManager {
 
+    constructor(){
+        console.log("constructor called!");
+        this.initialized = false;
+    }
+
     async loadCurrent(){
         
         var nuggetModel = await reactNativeStore.model("nuggets");
@@ -27,9 +32,13 @@ class CreatureManager {
     hasCurrentNugget(){ return this.current ? true : false;}
 
     async init(){
-        this.nuggetModel = await reactNativeStore.model("nuggets");
-        this.current = await this.loadCurrent();
+        if(!this.initialized){
+            this.nuggetModel = await reactNativeStore.model("nuggets");
+            this.current = await this.loadCurrent();
+            this.initialized = true;
+        }  
     }
+
 
     async setNewCurrent(nug) {
         var newCurrent = await this.addCreature(nug);

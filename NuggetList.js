@@ -25,11 +25,16 @@ var NuggetList = React.createClass({
     componentDidMount : function(){
         this.init();
     },
-    init : function(){
-    
+    init : async function(){
+        
+        await nm.init();
+        console.log("getting old nuggets"); 
+        var oldNugs = await nm.getAllCreatures();
+
+        
         var mockedNuggets = [{_id : 1, name: "Bilbo"},{_id: 2, name: "Pip"}];
         this.setState({
-            dataSource: this.state.dataSource.cloneWithRows(mockedNuggets),
+            dataSource: this.state.dataSource.cloneWithRows(oldNugs),
             loaded : true,
         });
     },
@@ -54,7 +59,6 @@ var NuggetList = React.createClass({
                     />
                     <View style={styles.rightContainer}>
                       <Text style={styles.title}>{nug.name}</Text>
-                      <Text style={styles.year}>1989</Text>
                     </View>
                   </View>
                 );
@@ -76,9 +80,6 @@ var styles = StyleSheet.create({
   title: {
     fontSize: 20,
     marginBottom: 8,
-    textAlign: 'center',
-  },
-  year: {
     textAlign: 'center',
   },
   thumbnail: {
